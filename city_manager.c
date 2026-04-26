@@ -9,8 +9,6 @@
 #include <unistd.h>
 #include <time.h>
 
-
-
 #define FIELD_SIZE 200
 #define INSPECTOR_NAME_SIZE 200
 #define CATEGORY_SIZE 45
@@ -28,9 +26,6 @@
 
 #define DIR_PERM 0750
 #define FILE_PERM 0664
-
-//> libraries
-
 
 typedef struct Report {
         int id;
@@ -97,7 +92,7 @@ void handle_add (const char *district, const char *role, const char *user) {
                 }
             }
         }
-
+ 
             if (!hasAccess) {
                 perror("nu are access!\n");
             }
@@ -110,7 +105,13 @@ void handle_add (const char *district, const char *role, const char *user) {
     r.severity = 2;
     r.latitude = 44.4268;
     r.longitude = 1025;
+ 
 
+    r.id = (int)time(NULL);
+    r.timestamp = time(NULL);
+    r.severity = 2;
+    r.latitude = 44.4268;
+    r.longitude = 1025;
 
     strncpy(r.inspectorName, user, MAX_INSPECTOR_NAME - 1);
 
@@ -124,6 +125,12 @@ void handle_add (const char *district, const char *role, const char *user) {
         perror("Eroare la deschiderea fisierului reports.dat");
         exit(3);
     }
+
+    if (fd < 0) {
+        perror("Eroare la deschiderea fisierului reports.dat");
+        exit(3);
+    } 
+
 
     chmod(path, 0664);
 
@@ -151,4 +158,42 @@ void handle_add (const char *district, const char *role, const char *user) {
 
 }
 
- 
+int main (int argc, char *argv[]) {
+    char *role = NULL;
+    char *user = NULL;
+    char *command = NULL;
+    char *district = NULL;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--role") == 0 && ((i + 1) < argc)) {
+            role = argv[++i];
+        }
+        else if (strcmp(argv[i], "--user") == 0 && ((i + 1) < argc)) {
+            user = argv[++i];
+        }
+        else if (!command) {
+            command = argv[i];
+            if ((i + 1) < argc) {
+                district = argv[++i];
+            }
+        }
+
+        if (!role || !user || !command || !district) {
+            perror("Eroare! Lipsesc argumentele esentiale!\n");
+            exit(1);
+        }
+        printf("||---------------------------CITY MANAGER----------------------------------------||\n\n");
+
+        printf("|| User : %s ----- Role : %s ----- Command : %s ------ District : %s ||\n\n", user, role, command, district);
+
+        if (strcmp(command, "add") == 0) {
+
+            //add_comand => urmeaza implementare :)
+
+        }
+        
+
+    }
+    return 0;
+}
+
