@@ -8,7 +8,10 @@
 #define MAX_CATEGORY_NAME 50
 #define MAX_DESCRIPTION 200
 
-#define DIR_PREM 0750
+#define CATEGORY_SIZE 45
+#define FIELD_SIZE 200
+
+#define DIR_PREM 0770//0750 modif
 #define BIN_PERM 0664
 #define CFG_PERM 0640
 #define LOG_PERM 0644
@@ -23,6 +26,14 @@ typedef struct Report {
     time_t timestamp;
     char descriptionText[MAX_DESCRIPTION];
 } Report;
+
+void initDistrictConfig(const char *district);
+
+void handleAdd (const char *district, const char *role, const char *user);
+void handleRemoveReport(const char *district, int targetID, const char *role, const char *user);
+
+void logOperation(const char *district, const char *role, const char *user, const char *action);
+ 
 
 
 

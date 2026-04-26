@@ -12,13 +12,14 @@ int main (int argc, char *argv[]) {
         exit(1);
     }
 
-    // executabil -> opțiune_rol -> valoare_rol -> acțiune -> district
+    
     
     char *role = NULL;
     char *district = NULL;
     char *command = NULL;
     char *reportID = NULL;
     char *user = "anonim";
+    int targetID = -1;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp (argv[i], "--role") == 0 && (i + 1 < argc)) {
@@ -66,14 +67,18 @@ int main (int argc, char *argv[]) {
             exit(5);
         }
 
-        handleRemoveReport(district, atoi(reportID));  
+        targetID = atoi(reportID);
+
+        if (targetID <= 0) {
+            fprintf(stderr, "Eroare! ReportID trebuie sa fie un numar valid, intreg pozitiv!\n");
+            exit(6);
+        }
+
+        handleRemoveReport(district, targetID, role, user);
     }
 
     return 0;
 }   
 
-// ./city_manager --role manager --remove_report downtown 17 => argc = 6
 
-
-// gcc -Wall main.c city_manager.c -o city_manager
 
