@@ -3,7 +3,7 @@ Prompt trimis către AI:
 
   Sunt student la Sisteme de Operare(SO) și lucrez la un proiect în C care gestionează rapoarte urbane. Am nevoie de asistență pentru implementarea a două funcții critice pentru motorul de filtrare al aplicației.
 
-Structura de date utilizată este:
+Structura de date utilizată este: 
 
 typedef struct Report {
     int id;
