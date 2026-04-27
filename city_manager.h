@@ -2,6 +2,8 @@
 #define CITY_MANAGER_H
 
 #include <time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #define MAX_PATH 256
 #define MAX_INSPECTOR_NAME 100
@@ -11,10 +13,12 @@
 #define CATEGORY_SIZE 45
 #define FIELD_SIZE 200
 
-#define DIR_PREM 0770//0750 modif
-#define BIN_PERM 0664
-#define CFG_PERM 0640
-#define LOG_PERM 0644
+#define DIR_PERM 0750    // rwxr-x---
+#define FILE_PERM 0664   // rw-rw-r--
+#define CFG_PERM 0640    // rw-r-----
+#define LOG_PERM 0644    // rw-r--r--
+
+ 
 
 typedef struct Report {
     int id;
@@ -34,7 +38,10 @@ void handleRemoveReport(const char *district, int targetID, const char *role, co
 
 void logOperation(const char *district, const char *role, const char *user, const char *action);
  
+int checkAccess(const char *path, const char *role, char access_type);
 
+void getPermissionsSymbolic(mode_t mode, char *str);
 
+void handleList(const char *district);
 
 #endif

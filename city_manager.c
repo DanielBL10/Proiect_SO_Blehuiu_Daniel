@@ -38,22 +38,4 @@ typedef struct Report {
         char descriptionText[FIELD_SIZE];
     } Report;
 
-void logAction (const char *district, const char *role, const char *user, const char *action) {
-    char path[MAX_PATH];
-    snprintf(path, MAX_PATH, "%s/logged_district", district);
-
-    int fd = open(path, O_WRONLY | O_CREAT |O_APPEND, 0644);
-
-    if (fd < 0) {
-        return;
-    }
-
-    char entry[MAX_LOG_ENTRY];
-    time_t now = time(NULL);
-
-    int len = snprintf(entry, MAX_LOG_ENTRY, "[%ld] %s: %s %s\n", now, role, user, action);
-
-    write(fd, entry, len);
-    close(fd);
-}
 

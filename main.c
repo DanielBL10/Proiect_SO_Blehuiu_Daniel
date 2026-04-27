@@ -7,10 +7,7 @@
 
 int main (int argc, char *argv[]) {
     
-    if (argc < 5) {
-        fprintf(stderr, "Eroare numar argumente in linie de comanda!\n");
-        exit(1);
-    }
+   
 
     
     
@@ -37,6 +34,10 @@ int main (int argc, char *argv[]) {
             command = "remove_report";
             district = argv[++i];
             reportID = argv[++i]; 
+        }
+        else if (strcmp (argv[i], "--list") == 0 && (i + 1 < argc)) {
+            command = "list";
+            district = argv[++i];
         }
     }
 
@@ -75,6 +76,11 @@ int main (int argc, char *argv[]) {
         }
 
         handleRemoveReport(district, targetID, role, user);
+    }
+
+    if (strcmp (command, "list") == 0) {
+        printf("Vom lista rapoartele din districtul %s\n", district);
+        handleList(district);
     }
 
     return 0;

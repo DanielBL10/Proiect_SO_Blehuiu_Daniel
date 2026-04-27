@@ -1,0 +1,4 @@
+[Sun Apr 26 23:11:19 2026] Role: manager | User: Alice | Action: ADD_REPORT
+[Sun Apr 26 23:12:02 2026] Role: inspector | User: Bob | Action: ADD_REPORT
+[Sun Apr 26 23:14:47 2026] Role: manager | User: Alice | Action: ADD_REPORT
+[Sun Apr 26 23:15:15 2026] Role: inspector | User: Bob | Action: ADD_REPORT
