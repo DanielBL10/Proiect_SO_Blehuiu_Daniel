@@ -25,7 +25,7 @@ Salut! Iată implementarea profesională a celor două funcții, optimizate pent
 A. Funcția parse_condition
 Această funcție utilizează seturi de scanare ([^:]) pentru a extrage datele fără a altera string-ul original.
 
-
+```c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -57,7 +57,7 @@ int parse_condition(const char *input, char *field, char *op, char *value) {
 
     return 0;
 }
-
+```
 
  # Cerința 2:
   Implementează funcția int match_condition(Report *r, const char *field, const char *op, const char *value);. Trebuie să evalueze dacă recordul r satisface condiția. Gestionarea tipurilor: severity (int), timestamp (long), category și inspector (string). Pentru string-uri, se vor suporta doar operatorii == și !=. Returnează 1 dacă este îndeplinită condiția, 0 în caz contrar. 
