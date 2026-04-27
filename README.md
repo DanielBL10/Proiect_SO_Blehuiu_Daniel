@@ -5,14 +5,14 @@
 City Manager este un utilitar de linie de comandă dezvoltat în C pentru sisteme Linux/UNIX. Acesta permite gestionarea rapoartelor de infrastructură urbană prin 
 stocare binară eficientă și un sistem de securitate bazat pe roluri (RBAC - Role Based Access Control).
 
-# 2. 2. Instalare și Compilare
+# 2 Instalare și Compilare
 
 Programul necesită un compilator GCC și un mediu POSIX (Linux, macOS sau WSL).
 
  # Sintaxa  
 gcc -Wall main.c reports.c -o city_manager
 
-#3. Arhitectura de Securitate
+# 3. Arhitectura de Securitate
 Accesul la date este restricționat programatic. Aplicația verifică bitul de permisiune al fișierului reports.dat înainte de execuție:
 
 Manager: Are drepturi de scriere/citire asupra fișierelor de tip owner (S_IRUSR, S_IWUSR).
