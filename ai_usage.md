@@ -100,3 +100,9 @@ int match_condition(Report *r, const char *field, const char *op, const char *va
 }
 
 ```
+
+# Ce am făcut
+
+   Sistem de filtrare binară: Am implementat un motor de căutare care citește direct structuri Report din fișierul reports.dat. ,am lucrat pur cu apeluri de sistem (read, open, lseek).
+  Parsare manuală de condiții: Am construit un parser care descompune argumente de tip câmp:operator:valoare. Am ales să folosesc pointeri și adrese de memorie (strchr) pentru a extrage sub-stringurile, asigurând o validare riguroasă a lungimii datelor introduse.
+  Gestiunea argumentelor (argv): Am sincronizat logica din main.c cu funcția de filtrare, astfel încât programul să știe exact unde se termină flag-urile de sistem și unde încep condițiile utilizatorului, evitând interpretarea eronată a numelui executabilului.
