@@ -459,7 +459,7 @@ void handleFilter(const char *district, int conditionCount, char **conditions) {
         int matchesAll = 1;
 
         for (int i = 0; i < conditionCount; i++) {
-            // Verificam la sange: daca conditia nu se poate parsa, o respingem automat!
+         
             if (parse_condition(conditions[i], f, o, v) == 0) {
                 if (!match_condition(&r, f, o, v)) {
                     matchesAll = 0; 
@@ -475,7 +475,7 @@ void handleFilter(const char *district, int conditionCount, char **conditions) {
         if (matchesAll) {
             foundAny = 1;
             
-            // Transformam timestamp-ul urias intr-o data curata si citibila
+           
             char timeBuf[32];
             strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&r.timestamp));
             
@@ -489,45 +489,3 @@ void handleFilter(const char *district, int conditionCount, char **conditions) {
     close(fd);
 }
 
-
-
-
-// void handleFilter(const char *district, int conditionCount, char **conditions) {
-//     char path[MAX_PATH];
-//     snprintf(path, MAX_PATH, "%s/reports.dat", district);
-
-//     int fd = open(path, O_RDONLY);
-//     if (fd < 0) {
-//         perror("Eroare la deschiderea bazei de date pentru filtrare");
-//         return;
-//     }
-
-//     Report r;
-//     char f[16], o[4], v[32];
-//     int foundAny = 0;
-
-//     printf("\n--- REZULTATE FILTRARE IN DISTRICTUL: %s ---\n", district);
-
-//     while (read(fd, &r, sizeof(Report)) == sizeof(Report)) {
-//         int matchesAll = 1;
-
-//         for (int i = 0; i < conditionCount; i++) {
-//             if (parse_condition(conditions[i], f, o, v) == 0) {
-//                 if (!match_condition(&r, f, o, v)) {
-//                     matchesAll = 0; 
-//                     break; 
-//                 }
-//             }
-//         }
-
-//         if (matchesAll) {
-//             foundAny = 1;
-//             printf("[%d] %s | %s | Sev: %d | Data: %ld\n", 
-//                     r.id, r.inspectorName, r.category, r.severity, (long)r.timestamp);
-//             printf("Descriere: %s\n------------------------------------------\n", r.descriptionText);
-//         }
-//     }
-
-//     if (!foundAny) printf("Niciun raport nu indeplineste conditiile.\n");
-//     close(fd);
-// }

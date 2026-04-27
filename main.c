@@ -51,7 +51,7 @@ int main (int argc, char *argv[]) {
         else if (strcmp(argv[i], "--filter") == 0 && (i + 1 < argc)) {
             command = "filter";
             district = argv[++i];
-            conditionStartIndex = i + 1; // CORECTAT AICI (nu 0)
+            conditionStartIndex = i + 1;  
             break; 
         }
     }
