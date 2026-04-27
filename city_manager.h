@@ -14,9 +14,9 @@
 #define FIELD_SIZE 200
 
 #define DIR_PERM 0750    // rwxr-x---
-#define FILE_PERM 0664   // rw-rw-r--
+#define FILE_PERM 0640   // rw-rw-r--
 #define CFG_PERM 0640    // rw-r-----
-#define LOG_PERM 0644    // rw-r--r--
+#define LOG_PERM 0640    // rw-r--r--
 
  
 
@@ -43,5 +43,16 @@ int checkAccess(const char *path, const char *role, char access_type);
 void getPermissionsSymbolic(mode_t mode, char *str);
 
 void handleList(const char *district);
+
+void view(const char *district, int targetID, const char *role);
+
+void update_threshold(const char *district, const char *role, int newValue);
+
+int parse_condition(const char *input, char *field, char *op, char *value);
+
+int match_condition(Report *r, const char *field, const char *op, const char *value);
+
+void handleFilter(const char *district, int conditionCount, char **conditions);
+
 
 #endif

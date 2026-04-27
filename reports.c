@@ -5,13 +5,14 @@
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "city_manager.h"
 
 #define DIR_PERM 0750
-#define FILE_PERM 0664
+#define FILE_PERM 0640
 #define CFG_PERM 0640
-#define LOG_PERM 0644
+#define LOG_PERM 0640
 
 
 
@@ -127,8 +128,10 @@ void handleAdd(const char *district, const char *role, const char *user) {
     }
      
     unlink(linkName);  
-    symlink(path, linkName);  
 
+    if (symlink (path, linkName) != 0) {
+        perror("Avertisment Symlink");
+    }
     
     int fd = open(path, O_WRONLY | O_CREAT | O_APPEND, FILE_PERM);
     if (fd >= 0) {
@@ -300,3 +303,231 @@ void handleList(const char *district) {
     
     close(fd);
 }
+
+void view(const char *district, int targetID, const char *role) {
+    char path[MAX_PATH];
+    snprintf(path, MAX_PATH, "%s/reports.dat", district);
+
+    if (!checkAccess(path, role, 'r')) {
+        fprintf(stderr, "Acces Refuzat: Rolul '%s' nu are permisiune de citire!\n", role);
+        return;
+    }
+
+    int fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        perror("Eroare la deschiderea bazei de date");
+        return;
+    }
+
+    Report r;
+    int found = 0;
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)) {
+        if (r.id == targetID) {
+            found = 1;
+            printf("\n ---------DETALII RAPORT ID: %d ===\n", r.id);
+            printf("Inspector:   %s\n", r.inspectorName);
+            printf("Locatie:     Lat: %.4f, Long: %.4f\n", r.latitude, r.longitude);
+            printf("Categorie:   %s\n", r.category);
+            printf("Severitate:  %d\n", r.severity);
+            
+            char timeBuf[32];
+            strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&r.timestamp));
+            printf("Data/Ora:    %s\n", timeBuf);
+            printf("Descriere:   %s\n", r.descriptionText);
+            printf("|| ----------------------------------- ||\n");
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Raportul cu ID %d nu a fost gasit in districtul %s.\n", targetID, district);
+    }
+
+    close(fd);
+}
+
+
+void update_threshold(const char *district, const char *role, int newValue) {
+    char cfgPath[MAX_PATH];
+    snprintf(cfgPath, MAX_PATH, "%s/district.cfg", district);
+
+    if (strcmp(role, "manager") != 0) {
+        fprintf(stderr, "Acces Refuzat: Doar managerul poate modifica pragul de severitate!\n");
+        return;
+    }
+ 
+    struct stat st;
+    if (stat(cfgPath, &st) == -1) {
+        perror("Eroare la accesarea district.cfg");
+        return;
+    }
+
+    if ((st.st_mode & 0777) != CFG_PERM) { 
+        fprintf(stderr, "EROARE SECURITATE: Permisiunile district.cfg au fost alterate! Operatiune refuzata.\n");
+        return;
+    }
+
+    int fd = open(cfgPath, O_WRONLY | O_TRUNC);
+    if (fd < 0) {
+        perror("Eroare la deschiderea fisierului de configurare");
+        return;
+    }
+
+    char buffer[64];
+    int len = snprintf(buffer, sizeof(buffer), "severity_threshold=%d\n", newValue);
+    if (write(fd, buffer, len) != len) {
+        perror("Eroare la scrierea configuratiei");
+    } else {
+        printf("Pragul de severitate pentru districtul %s a fost actualizat la: %d\n", district, newValue);
+        logOperation(district, role, "manager", "UPDATE_THRESHOLD");
+    }
+
+    close(fd);
+}
+
+int parse_condition(const char *input, char *field, char *op, char *value) {
+    if (!input || !field || !op || !value) return -1;
+
+    
+    int matched = sscanf(input, "%15[^:]:%3[^:]:%31s", field, op, value);
+
+    if (matched != 3) return -1;
+
+    const char *valid_fields[] = {"severity", "category", "inspector", "timestamp"};
+    int field_ok = 0;
+    for (int i = 0; i < 4; i++) {
+        if (strcmp(field, valid_fields[i]) == 0) { field_ok = 1; break; }
+    }
+    if (!field_ok) return -1;
+
+    const char *valid_ops[] = {"==", "!=", "<", "<=", ">", ">="};
+    int op_ok = 0;
+    for (int i = 0; i < 6; i++) {
+        if (strcmp(op, valid_ops[i]) == 0) { op_ok = 1; break; }
+    }
+    if (!op_ok) return -1;
+
+    return 0;
+}
+
+int match_condition(Report *r, const char *field, const char *op, const char *value) {
+    if (!r || !field || !op || !value) return 0;
+
+    if (strcmp(field, "severity") == 0 || strcmp(field, "timestamp") == 0) {
+        long r_val = (strcmp(field, "severity") == 0) ? r->severity : (long)r->timestamp;
+        long test_val = atol(value);
+
+        if (strcmp(op, "==") == 0) return r_val == test_val;
+        if (strcmp(op, "!=") == 0) return r_val != test_val;
+        if (strcmp(op, "<") == 0)  return r_val < test_val;
+        if (strcmp(op, "<=") == 0) return r_val <= test_val;
+        if (strcmp(op, ">") == 0)  return r_val > test_val;
+        if (strcmp(op, ">=") == 0) return r_val >= test_val;
+    }
+ 
+    const char *r_str = (strcmp(field, "category") == 0) ? r->category : r->inspectorName;
+    int cmp = strcmp(r_str, value);
+
+    if (strcmp(op, "==") == 0) return cmp == 0;
+    if (strcmp(op, "!=") == 0) return cmp != 0;
+    if (strcmp(op, "<") == 0)  return cmp < 0;   
+    if (strcmp(op, "<=") == 0) return cmp <= 0;
+    if (strcmp(op, ">") == 0)  return cmp > 0;    
+    if (strcmp(op, ">=") == 0) return cmp >= 0;
+
+    return 0; 
+}
+
+
+void handleFilter(const char *district, int conditionCount, char **conditions) {
+    char path[MAX_PATH];
+    snprintf(path, MAX_PATH, "%s/reports.dat", district);
+
+    int fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        perror("Eroare la deschiderea bazei de date pentru filtrare");
+        return;
+    }
+
+    Report r;
+    char f[16], o[4], v[32];
+    int foundAny = 0;
+
+    printf("\n--- REZULTATE FILTRARE IN DISTRICTUL: %s ---\n", district);
+
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)) {
+        int matchesAll = 1;
+
+        for (int i = 0; i < conditionCount; i++) {
+            // Verificam la sange: daca conditia nu se poate parsa, o respingem automat!
+            if (parse_condition(conditions[i], f, o, v) == 0) {
+                if (!match_condition(&r, f, o, v)) {
+                    matchesAll = 0; 
+                    break; 
+                }
+            } else {
+                fprintf(stderr, "Eroare: Conditia '%s' este invalida si a fost respinsa!\n", conditions[i]);
+                matchesAll = 0;
+                break;
+            }
+        }
+
+        if (matchesAll) {
+            foundAny = 1;
+            
+            // Transformam timestamp-ul urias intr-o data curata si citibila
+            char timeBuf[32];
+            strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&r.timestamp));
+            
+            printf("[%d] Inspector: %s | Categorie: %s | Sev: %d | Data: %s\n", 
+                    r.id, r.inspectorName, r.category, r.severity, timeBuf);
+            printf("Descriere: %s\n------------------------------------------\n", r.descriptionText);
+        }
+    }
+
+    if (!foundAny) printf("Niciun raport nu indeplineste conditiile de filtrare.\n");
+    close(fd);
+}
+
+
+
+
+// void handleFilter(const char *district, int conditionCount, char **conditions) {
+//     char path[MAX_PATH];
+//     snprintf(path, MAX_PATH, "%s/reports.dat", district);
+
+//     int fd = open(path, O_RDONLY);
+//     if (fd < 0) {
+//         perror("Eroare la deschiderea bazei de date pentru filtrare");
+//         return;
+//     }
+
+//     Report r;
+//     char f[16], o[4], v[32];
+//     int foundAny = 0;
+
+//     printf("\n--- REZULTATE FILTRARE IN DISTRICTUL: %s ---\n", district);
+
+//     while (read(fd, &r, sizeof(Report)) == sizeof(Report)) {
+//         int matchesAll = 1;
+
+//         for (int i = 0; i < conditionCount; i++) {
+//             if (parse_condition(conditions[i], f, o, v) == 0) {
+//                 if (!match_condition(&r, f, o, v)) {
+//                     matchesAll = 0; 
+//                     break; 
+//                 }
+//             }
+//         }
+
+//         if (matchesAll) {
+//             foundAny = 1;
+//             printf("[%d] %s | %s | Sev: %d | Data: %ld\n", 
+//                     r.id, r.inspectorName, r.category, r.severity, (long)r.timestamp);
+//             printf("Descriere: %s\n------------------------------------------\n", r.descriptionText);
+//         }
+//     }
+
+//     if (!foundAny) printf("Niciun raport nu indeplineste conditiile.\n");
+//     close(fd);
+// }

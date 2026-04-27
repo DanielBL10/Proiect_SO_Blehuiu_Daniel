@@ -1,3 +1,13 @@
 [Mon Apr 27 02:56:40 2026] Role: manager | User: SefulCelMare | Action: ADD_REPORT
 [Mon Apr 27 02:58:14 2026] Role: inspector | User: Dorel | Action: ADD_REPORT
 [Mon Apr 27 03:00:11 2026] Role: manager | User: SefulCelMare | Action: REMOVE_REPORT
+[Mon Apr 27 03:27:38 2026] Role: manager | User: Alice | Action: ADD_REPORT
+[Mon Apr 27 03:30:32 2026] Role: manager | User: Alice | Action: ADD_REPORT
+[Mon Apr 27 06:13:05 2026] Role: manager | User: alice | Action: ADD_REPORT
+[Mon Apr 27 06:19:55 2026] Role: manager | User: alice | Action: ADD_REPORT
+[Mon Apr 27 07:35:02 2026] Role: manager | User: alice | Action: ADD_REPORT
+[Mon Apr 27 07:41:20 2026] Role: manager | User: alice | Action: ADD_REPORT
+[Mon Apr 27 07:42:22 2026] Role: manager | User: bob | Action: ADD_REPORT
+[Mon Apr 27 07:57:02 2026] Role: manager | User: alice | Action: ADD_REPORT
+[Mon Apr 27 07:57:46 2026] Role: manager | User: bob | Action: ADD_REPORT
+[Mon Apr 27 07:59:27 2026] Role: manager | User: charlie | Action: ADD_REPORT
