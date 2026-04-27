@@ -68,11 +68,10 @@ Te rog să oferi o implementare robustă, conformă cu standardul POSIX și ușo
 Această funcție realizează conversia necesară a valorii de test (din string în tipul numeric corespunzător) și aplică operatorul logic.
 
 ```c
-
-  int match_condition(Report *r, const char *field, const char *op, const char *value) {
+int match_condition(Report *r, const char *field, const char *op, const char *value) {
     if (!r || !field || !op || !value) return 0;
 
-    // Logica pentru campuri Numerice (Severity si Timestamp)
+    // --- CAZUL 1: Campuri Numerice (severity, timestamp) ---
     if (strcmp(field, "severity") == 0 || strcmp(field, "timestamp") == 0) {
         long r_val = (strcmp(field, "severity") == 0) ? r->severity : (long)r->timestamp;
         long test_val = atol(value);
@@ -85,14 +84,19 @@ Această funcție realizează conversia necesară a valorii de test (din string 
         if (strcmp(op, ">=") == 0) return r_val >= test_val;
     }
 
-    // Logica pentru campuri String (Category si Inspector)
-    // Nota: Structura foloseste 'inspectorName', dar input-ul este 'inspector'
+    // --- CAZUL 2: Campuri String (category, inspector) ---
+    // Mapam 'inspector' din terminal la 'inspectorName' din structura
     const char *r_str = (strcmp(field, "category") == 0) ? r->category : r->inspectorName;
-    
-    if (strcmp(op, "==") == 0) return strcmp(r_str, value) == 0;
-    if (strcmp(op, "!=") == 0) return strcmp(r_str, value) != 0;
+    int cmp = strcmp(r_str, value);
 
-    return 0; // Operatori de comparatie (>, <) nu au sens pe string-uri aici
+    if (strcmp(op, "==") == 0) return cmp == 0;
+    if (strcmp(op, "!=") == 0) return cmp != 0;
+    if (strcmp(op, "<") == 0)  return cmp < 0;   // r_str e inainte de value alfabetic
+    if (strcmp(op, "<=") == 0) return cmp <= 0;
+    if (strcmp(op, ">") == 0)  return cmp > 0;   // r_str e dupa value alfabetic
+    if (strcmp(op, ">=") == 0) return cmp >= 0;
+
+    return 0; 
 }
 
 ```
