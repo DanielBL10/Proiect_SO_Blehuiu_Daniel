@@ -43,4 +43,5 @@ Căutare după criterii multiple. Operatorii acceptați: ==, !=, <, <=, >, >=.
 ./city_manager --role inspector --user bob --view Sector1 [ID]
 
 # 5. Structura Datelor (Tehnic)
-Informația este salvată într-o structură binară fixă (struct Report), asigurând o viteză de procesare ridicată și o amprentă mică pe disc.
+Informația este salvată într-o structură binară fixă (struct Report), asigurând o viteză de procesare ridicată și o amprentă mică pe disc.Componentele structurii sunt:
+id, inspectorName, latitude, float longitude, category, severity, timestamp, descriptionText.
