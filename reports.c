@@ -10,11 +10,9 @@
 #include "city_manager.h"
 
 #define DIR_PERM 0750
-#define FILE_PERM 0640
+#define FILE_PERM 0664
 #define CFG_PERM 0640
-#define LOG_PERM 0640
-
-
+#define LOG_PERM 0644
 
 int checkAccess(const char *path, const char *role, char access_type) {
     struct stat st;
@@ -38,15 +36,6 @@ void logOperation(const char *district, const char *role, const char *user, cons
     char logPath[MAX_PATH];
     snprintf(logPath, MAX_PATH, "%s/logged_district", district);
 
-    struct stat st;
-    
-    if (stat(logPath, &st) == 0) {
-        if (!checkAccess(logPath, role, 'w')) {
-            fprintf(stderr, "EROARE SECURITATE: Rolul '%s' nu are permisiune de scriere in jurnal!\n", role);
-            return;  
-        }
-    }
- 
     int fd = open(logPath, O_WRONLY | O_CREAT | O_APPEND, LOG_PERM);
     if (fd < 0) {
         perror("Eroare la deschiderea jurnalului");
@@ -54,14 +43,10 @@ void logOperation(const char *district, const char *role, const char *user, cons
     }
 
     time_t acum = time(NULL);
-    char *timp_str = ctime(&acum);
-    if (timp_str && timp_str[strlen(timp_str) - 1] == '\n') {
-        timp_str[strlen(timp_str) - 1] = '\0';
-    }
-
     char buffer[512];
-    int len = snprintf(buffer, sizeof(buffer), "[%s] Role: %s | User: %s | Action: %s\n", 
-       timp_str ? timp_str : "N/A", role, user, action);
+
+    int len = snprintf(buffer, sizeof(buffer), "%ld\t%s\t%s\t%s\n", 
+                       (long)acum, user, role, action);
 
     if (write(fd, buffer, len) != len) {
         perror("Eroare la scrierea in jurnal");
@@ -91,19 +76,18 @@ void initDistrictConfig(const char *district) {
 }
 
  
-
-void handleAdd(const char *district, const char *role, const char *user) {
+ void handleAdd(const char *district, const char *role, const char *user) {
     char path[MAX_PATH];
     char linkName[MAX_PATH];
     Report r;
     struct stat d_stat;
-
+ 
     if (stat(district, &d_stat) == -1) {
         if (strcmp(role, "manager") != 0) {
             fprintf(stderr, "Acces Refuzat: Doar rolul 'manager' poate crea un district nou!\n");
             return;
         }
-        if (mkdir(district, DIR_PERM) == -1 && errno != EEXIST) {
+        if (mkdir(district, DIR_PERM) == -1) {
             perror("Eroare la creearea directorului!");
             return;
         }
@@ -114,74 +98,58 @@ void handleAdd(const char *district, const char *role, const char *user) {
     snprintf(path, MAX_PATH, "%s/reports.dat", district);
     snprintf(linkName, MAX_PATH, "active_reports-%s", district);
 
-    struct stat rep_stat;
-    if (stat(path, &rep_stat) == 0) {
-        if (!checkAccess(path, role, 'w')) {
-            fprintf(stderr, "Acces Refuzat: Rolul '%s' nu are permisiune sa adauge rapoarte in %s!\n", role, path);
-            return;
+    struct stat link_info, target_info;
+    if (lstat(linkName, &link_info) == 0) {
+        if (S_ISLNK(link_info.st_mode)) {
+            
+            if (stat(linkName, &target_info) == -1) {
+                printf("[WARNING] Detectat dangling link: %s (tinta stearsa). Se curata...\n", linkName);
+            }
         }
-    } else {
-        if (!checkAccess(district, role, 'w')) {
-            fprintf(stderr, "Acces Refuzat: Rolul '%s' nu poate crea baza de date in %s!\n", role, district);
-            return;
-        }
+        unlink(linkName);  
     }
-     
-    unlink(linkName);  
-
-    if (symlink (path, linkName) != 0) {
+    
+    if (symlink(path, linkName) != 0) {
         perror("Avertisment Symlink");
     }
     
+    
     int fd = open(path, O_WRONLY | O_CREAT | O_APPEND, FILE_PERM);
     if (fd >= 0) {
-        
+        fchmod(fd, FILE_PERM);  
+
         memset(&r, 0, sizeof(Report));    
         r.id = (int)time(NULL);
         r.timestamp = time(NULL); 
         strncpy(r.inspectorName, user, MAX_INSPECTOR_NAME - 1); 
-        r.inspectorName[MAX_INSPECTOR_NAME - 1] = '\0';
+        
         printf("\n=== ADAUGARE RAPORT NOU IN '%s' ===\n", district);
-        
-        
-        printf("Latitudine: ");
-        if (scanf("%f", &r.latitude) != 1) r.latitude = 0.0;
+        printf("Latitudine: "); scanf("%f", &r.latitude);
+        printf("Longitudine: "); scanf("%f", &r.longitude);
 
-        printf("Longitudine: ");
-        if (scanf("%f", &r.longitude) != 1) r.longitude = 0.0;
-
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF);  
+        int c; while ((c = getchar()) != '\n' && c != EOF);  
 
         printf("Categoria (road / lighting / flooding): ");
-        if (fgets(r.category, CATEGORY_SIZE, stdin)) {
-            r.category[strcspn(r.category, "\n")] = 0;  
-        }
+        if (fgets(r.category, MAX_CATEGORY_NAME, stdin)) 
+            r.category[strcspn(r.category, "\n")] = 0;
 
-        printf("Severitate (1 = minor, 2 = moderate, 3 = critical): ");
-        if (scanf("%d", &r.severity) != 1) r.severity = 1; 
-            
+        printf("Severitate (1-3): "); scanf("%d", &r.severity);
         while ((c = getchar()) != '\n' && c != EOF);  
 
         printf("Scurta descriere: ");
-        if (fgets(r.descriptionText, FIELD_SIZE, stdin)) {
+        if (fgets(r.descriptionText, MAX_DESCRIPTION, stdin)) 
             r.descriptionText[strcspn(r.descriptionText, "\n")] = 0;
-        }
     
         write(fd, &r, sizeof(Report));
         close(fd);
-     
-        chmod(path, FILE_PERM);  
 
         printf("\nOperatiune realizata cu succes! ID: %d\n", r.id);
-            
         logOperation(district, role, user, "ADD_REPORT");
 
     } else {
         perror("Eroare la deschiderea fisierului reports.dat");
     }
-} 
-
+}
 
 
 void handleRemoveReport(const char *district, int targetID, const char *role, const char *user) {
@@ -345,7 +313,6 @@ void view(const char *district, int targetID, const char *role) {
 
     close(fd);
 }
-
 
 void update_threshold(const char *district, const char *role, int newValue) {
     char cfgPath[MAX_PATH];

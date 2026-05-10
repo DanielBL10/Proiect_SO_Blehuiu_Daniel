@@ -10,13 +10,11 @@
 #define MAX_CATEGORY_NAME 50
 #define MAX_DESCRIPTION 200
 
-#define CATEGORY_SIZE 45
-#define FIELD_SIZE 200
 
-#define DIR_PERM 0750    // rwxr-x---
-#define FILE_PERM 0640   // rw-rw-r--
-#define CFG_PERM 0640    // rw-r-----
-#define LOG_PERM 0640    // rw-r--r--
+#define DIR_PERM 0750
+#define FILE_PERM 0664
+#define CFG_PERM 0640
+#define LOG_PERM 0644
 
  
 
@@ -54,5 +52,8 @@ int match_condition(Report *r, const char *field, const char *op, const char *va
 
 void handleFilter(const char *district, int conditionCount, char **conditions);
 
+
+void remove_district(const char *district, const char *role);
+void notify_monitor(const char *district, const char *role);
 
 #endif
