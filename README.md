@@ -55,7 +55,7 @@ cat Sector1/logged_district
 
 ./city_manager --role inspector --user dorel --list Sector1
 
-./city_manager --role inspector --user dorel --view Sector1 <ID>
+./city_manager --role inspector --user dorel --view Sector1 <<ID>>
  
 ./city_manager --role inspector --user dorel --filter Sector1 "severity:>=:1"
  
