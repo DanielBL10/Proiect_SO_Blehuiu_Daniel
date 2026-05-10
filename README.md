@@ -88,8 +88,12 @@ cat Sector1/logged_district
 
 <img width="1685" height="772" alt="image" src="https://github.com/user-attachments/assets/d0b667c0-5f44-4e8a-a3ac-2a913bf27acf" />
 
-
 <img width="1395" height="1454" alt="image" src="https://github.com/user-attachments/assets/0c0c98f8-5a6b-4405-a9ad-cc41750d5e35" />
+
+<img width="978" height="1469" alt="image" src="https://github.com/user-attachments/assets/cea8168e-c95a-43a1-9c45-d5515f012d94" />
+
+<img width="1008" height="719" alt="image" src="https://github.com/user-attachments/assets/835a478e-313e-431b-800f-fce38991c9e1" />
+
 
 
 
