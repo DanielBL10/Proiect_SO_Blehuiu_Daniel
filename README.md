@@ -20,7 +20,6 @@ Manager: Are drepturi de scriere/citire asupra fișierelor de tip owner (S_IRUSR
 Inspector: Are drepturi de scriere/citire asupra fișierelor de tip group (S_IRGRP, S_IWGRP).
 
 # 4. Ghid de Comenzi
-# Adăugarea unui raport (--add)
 
 # Sintaxa
 
