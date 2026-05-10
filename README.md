@@ -61,6 +61,8 @@ cat Sector1/logged_district
  
 ./city_manager --role manager --user sefu --update_threshold Sector1 3
 
+./city_manager --role manager --user sefu --remove_report Sector1 `<ID>`
+
 # 7. Exemplu comenzi (pas cu pas)
 
 gcc -Wall main.c reports.c -o city_manager
@@ -76,5 +78,7 @@ cat Sector1/logged_district
 ./city_manager --role inspector --user dorel --filter Sector1 "severity:>=:1"
 
 ./city_manager --role manager --user sefu --update_threshold Sector1 3
+
+./city_manager --role manager --user sefu --remove_report Sector1 1777247848
 
 
