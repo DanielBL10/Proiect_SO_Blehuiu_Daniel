@@ -82,4 +82,15 @@ cat Sector1/logged_district
 ./city_manager --role manager --user sefu --remove_report Sector1 1777247848
 
 
-<img width="967" height="728" alt="image" src="https://github.com/user-attachments/assets/d8ecc5fb-2ae6-4454-90c1-0d9c5aad4189" />
+#8 Poze
+
+<img width="1599" height="1402" alt="image" src="https://github.com/user-attachments/assets/171d684e-f42b-4788-b7f5-e3d5d59b968a" />
+
+<img width="1654" height="1026" alt="image" src="https://github.com/user-attachments/assets/5f02a9b1-d73a-4ec6-a300-ebc6d4e99584" />
+
+<img width="975" height="1475" alt="image" src="https://github.com/user-attachments/assets/38969537-ffe3-4cac-a7f8-2cee9493d3fe" />
+
+<img width="973" height="1479" alt="image" src="https://github.com/user-attachments/assets/5ae644b0-b13e-4edf-88d6-ef1892d67264" />
+
+<img width="1053" height="463" alt="image" src="https://github.com/user-attachments/assets/0adda2ea-3f61-438b-92f6-0a6ce5581175" />
+
