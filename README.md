@@ -82,3 +82,4 @@ cat Sector1/logged_district
 ./city_manager --role manager --user sefu --remove_report Sector1 1777247848
 
 
+<img width="967" height="728" alt="image" src="https://github.com/user-attachments/assets/d8ecc5fb-2ae6-4454-90c1-0d9c5aad4189" />
