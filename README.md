@@ -20,7 +20,6 @@ Manager: Are drepturi de scriere/citire asupra fișierelor de tip owner (S_IRUSR
 Inspector: Are drepturi de scriere/citire asupra fișierelor de tip group (S_IRGRP, S_IWGRP).
 
 # 4. Ghid de Comenzi
-# Adăugarea unui raport (--add)
 
 # Sintaxa
 
@@ -45,3 +44,57 @@ Căutare după criterii multiple. Operatorii acceptați: ==, !=, <, <=, >, >=.
 # 5. Structura Datelor (Tehnic)
 Informația este salvată într-o structură binară fixă (struct Report), asigurând o viteză de procesare ridicată și o amprentă mică pe disc.Componentele structurii sunt:
 id, inspectorName, latitude, float longitude, category, severity, timestamp, descriptionText.
+
+# Comenzi (mai general)
+
+gcc -Wall main.c reports.c -o city_manager
+
+./city_manager --role manager --user sefu --add Sector1
+ 
+cat Sector1/logged_district
+
+./city_manager --role inspector --user dorel --list Sector1
+
+./city_manager --role inspector --user dorel --view Sector1 `<ID>`
+ 
+./city_manager --role inspector --user dorel --filter Sector1 "severity:>=:1"
+ 
+./city_manager --role manager --user sefu --update_threshold Sector1 3
+
+./city_manager --role manager --user sefu --remove_report Sector1 `<ID>`
+
+# 7. Exemplu comenzi (pas cu pas)
+
+gcc -Wall main.c reports.c -o city_manager
+
+./city_manager --role manager --user sefu --add Sector1
+
+cat Sector1/logged_district
+
+./city_manager --role inspector --user dorel --list Sector1
+
+./city_manager --role inspector --user dorel --view Sector1 1777247848
+
+./city_manager --role inspector --user dorel --filter Sector1 "severity:>=:1"
+
+./city_manager --role manager --user sefu --update_threshold Sector1 3
+
+./city_manager --role manager --user sefu --remove_report Sector1 1777247848
+
+
+#8 Poze
+
+<img width="1514" height="1442" alt="image" src="https://github.com/user-attachments/assets/355d43c0-2416-4a55-9e15-f9a84b85401f" />
+
+<img width="1685" height="772" alt="image" src="https://github.com/user-attachments/assets/d0b667c0-5f44-4e8a-a3ac-2a913bf27acf" />
+
+<img width="1395" height="1454" alt="image" src="https://github.com/user-attachments/assets/0c0c98f8-5a6b-4405-a9ad-cc41750d5e35" />
+
+<img width="978" height="1469" alt="image" src="https://github.com/user-attachments/assets/cea8168e-c95a-43a1-9c45-d5515f012d94" />
+
+<img width="1008" height="719" alt="image" src="https://github.com/user-attachments/assets/835a478e-313e-431b-800f-fce38991c9e1" />
+
+
+
+
+
