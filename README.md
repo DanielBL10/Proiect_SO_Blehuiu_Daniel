@@ -84,9 +84,9 @@ cat Sector1/logged_district
 
 #8 Poze
 
-#1
+
 <img width="1599" height="1402" alt="image" src="https://github.com/user-attachments/assets/171d684e-f42b-4788-b7f5-e3d5d59b968a" />
-#2
+
 <img width="1654" height="1026" alt="image" src="https://github.com/user-attachments/assets/5f02a9b1-d73a-4ec6-a300-ebc6d4e99584" />
 
 <img width="975" height="1475" alt="image" src="https://github.com/user-attachments/assets/38969537-ffe3-4cac-a7f8-2cee9493d3fe" />
