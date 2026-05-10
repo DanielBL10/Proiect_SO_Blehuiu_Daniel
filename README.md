@@ -84,14 +84,13 @@ cat Sector1/logged_district
 
 #8 Poze
 
+<img width="1514" height="1442" alt="image" src="https://github.com/user-attachments/assets/355d43c0-2416-4a55-9e15-f9a84b85401f" />
 
-<img width="1599" height="1402" alt="image" src="https://github.com/user-attachments/assets/171d684e-f42b-4788-b7f5-e3d5d59b968a" />
+<img width="1685" height="772" alt="image" src="https://github.com/user-attachments/assets/d0b667c0-5f44-4e8a-a3ac-2a913bf27acf" />
 
-<img width="1654" height="1026" alt="image" src="https://github.com/user-attachments/assets/5f02a9b1-d73a-4ec6-a300-ebc6d4e99584" />
 
-<img width="975" height="1475" alt="image" src="https://github.com/user-attachments/assets/38969537-ffe3-4cac-a7f8-2cee9493d3fe" />
+<img width="1395" height="1454" alt="image" src="https://github.com/user-attachments/assets/0c0c98f8-5a6b-4405-a9ad-cc41750d5e35" />
 
-<img width="973" height="1479" alt="image" src="https://github.com/user-attachments/assets/5ae644b0-b13e-4edf-88d6-ef1892d67264" />
 
-<img width="1053" height="463" alt="image" src="https://github.com/user-attachments/assets/0adda2ea-3f61-438b-92f6-0a6ce5581175" />
+
 
