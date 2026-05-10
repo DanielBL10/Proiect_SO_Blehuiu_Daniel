@@ -45,3 +45,21 @@ Căutare după criterii multiple. Operatorii acceptați: ==, !=, <, <=, >, >=.
 # 5. Structura Datelor (Tehnic)
 Informația este salvată într-o structură binară fixă (struct Report), asigurând o viteză de procesare ridicată și o amprentă mică pe disc.Componentele structurii sunt:
 id, inspectorName, latitude, float longitude, category, severity, timestamp, descriptionText.
+
+# 6. Exemplu comenzi (pas cu pas)
+
+gcc -Wall main.c reports.c -o city_manager
+
+./city_manager --role manager --user sefu --add Sector1
+
+cat Sector1/logged_district
+
+./city_manager --role inspector --user dorel --list Sector1
+
+./city_manager --role inspector --user dorel --view Sector1 1777247848
+
+./city_manager --role inspector --user dorel --filter Sector1 "severity:>=:1"
+
+./city_manager --role manager --user sefu --update_threshold Sector1 3
+
+
