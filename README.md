@@ -1,5 +1,7 @@
 ### City Manager - Manual de Utilizare
 
+## Phase 1
+
 # 1. Introducere
 
 City Manager este un utilitar de linie de comandă dezvoltat în C pentru sisteme Linux/UNIX. Acesta permite gestionarea rapoartelor de infrastructură urbană prin 
@@ -95,6 +97,18 @@ cat Sector1/logged_district
 <img width="1008" height="719" alt="image" src="https://github.com/user-attachments/assets/835a478e-313e-431b-800f-fce38991c9e1" />
 
 
+## Phase 2
 
+<img width="975" height="142" alt="image" src="https://github.com/user-attachments/assets/52df1a73-8a7a-4833-bb96-95cc31aab611" />
+
+<img width="975" height="240" alt="image" src="https://github.com/user-attachments/assets/6ec3cbb3-4e73-4024-96de-203f09a3a444" />
+
+<img width="975" height="166" alt="image" src="https://github.com/user-attachments/assets/6945e763-b632-4750-9c9f-7357d2c876e5" />
+
+<img width="975" height="226" alt="image" src="https://github.com/user-attachments/assets/d1379c30-7785-402c-9d17-494b0931e77d" />
+
+<img width="975" height="213" alt="image" src="https://github.com/user-attachments/assets/d5611a9b-85c8-4830-9952-af6bbae50567" />
+
+<img width="975" height="198" alt="image" src="https://github.com/user-attachments/assets/9db93e5c-e701-45d1-8148-3836d4fa8c51" />
 
 
