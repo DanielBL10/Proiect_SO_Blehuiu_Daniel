@@ -100,12 +100,13 @@ cat Sector1/logged_district
 ## Phase 2 : Processes and Signals
 ## Phase 2: 
 
-### 2.1. Compilarea aplicațiilor
+
+# 2.1. Compilarea aplicațiilor
 ```bash
 gcc -Wall monitor_reports.c -o monitor_reports
 gcc -Wall main.c reports.c -o city_manager
 
-#2.2. Demonstrare IPC (Semnale) și Jurnalizare
+# 2.2. Demonstrare IPC (Semnale) și Jurnalizare
 
 Terminal 1 : ./monitor_reports
 
@@ -116,11 +117,11 @@ Terminal 2 : cat Sector_Test/logged_district
 
 
 
-#2.3. Demonstrare creare procese (fork + exec) și pipe
+# 2.3. Demonstrare creare procese (fork + exec) și pipe
 Terminal 2: Ștergerea recursivă a districtului de test
 ./city_manager --role manager --user sefu --remove_district Sector_Test
 
-#2.4. Demonstrare robuștețe (kill 0)
+# 2.4. Demonstrare robuștețe (kill 0)
 Terminal 1: Se oprește monitorul folosind Ctrl+C (declanșează SIGINT și șterge .monitor_pid)
 
 Terminal 2: Adăugare raport cu monitorul oprit pentru a testa fallback-ul
@@ -129,7 +130,7 @@ Terminal 2: Adăugare raport cu monitorul oprit pentru a testa fallback-ul
 Terminal 2: Verificarea tratării erorii în log
 cat Sector1/logged_district
 
-#2.5. Generarea structurii finale (Cerința: min. 2 districte, 5 rapoarte)
+# 2.5. Generarea structurii finale (Cerința: min. 2 districte, 5 rapoarte)
 Se creează al doilea district obligatoriu (Sector1 are deja 4 rapoarte din testele anterioare)
 Terminal 2 : ./city_manager --role manager --user sefu --add Sector2
 Terminal 2 : Afișarea arborelui de directoare pentru a dovedi existența fișierelor și a symlink-urilor
