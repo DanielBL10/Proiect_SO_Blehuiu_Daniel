@@ -112,3 +112,46 @@ int match_condition(Report *r, const char *field, const char *op, const char *va
 •	Eliminarea redundanței: Am eliminat verificările if(!field) din match_condition.
 •	Controlul Indexului (conditionStartIndex): Am modificat manual logica din main.c pentru a fixa indexul de unde începe citirea condițiilor.
 •	Sincronizarea câmpurilor: Am redenumit variabilele din codul generat pentru a se potrivi cu structura mea.
+
+
+
+
+
+
+# Utilizarea AI (Inteligență Artificială) - Faza 1 și Faza 2
+**Proiect:** City Manager System
+
+## FAZA 1: Gestiunea Fișierelor și a Permisiunilor
+
+### 1. Unde am folosit AI 
+* În implementarea operațiunilor de intrare/ieșire la nivel scăzut (system calls: `open`, `read`, `write`) pentru manipularea fișierelor binare (`reports.dat`).
+* La setarea și verificarea permisiunilor folosind măști pe biți direct pe sistemul de fișiere (`chmod`, `fchmod`, `stat`).
+* În logica de creare și gestionare a legăturilor simbolice (symlinks) și a directoarelor (`mkdir`, `unlink`).
+
+### 2. De ce am folosit AI 
+* Pentru a mă asigura că respect cu strictețe constrângerile proiectului (evitarea funcțiilor din biblioteca standard C precum `fopen` sau `fprintf` pentru parsarea/scrierea datelor brute).
+* Pentru a depana erori de memorie (Segmentation Faults) apărute la gestionarea pointerilor și parsarea argumentelor din linia de comandă.
+* Pentru a înțelege corect logica de shiftare a blocurilor de memorie (`lseek`, `ftruncate`) necesară la ștergerea unei înregistrări din interiorul fișierului binar, fără a corupe restul datelor.
+
+### 3. Cum am folosit AI 
+* **Prompting direcționat:** Am oferit asistentului AI fragmente din cerința PDF și am solicitat exclusiv abordări compatibile cu standardul POSIX.
+* **Code Review:** Am introdus codul scris de mine pentru a fi verificat "la sânge" de posibile erori logice sau vulnerabilități (ex: manipularea incorectă a pointerilor neinițializați).
+
+---
+
+## FAZA 2: Procese, Semnale și IPC
+
+### 1. Unde am folosit AI 
+* În scrierea programului independent `monitor_reports.c` pentru tratarea asincronă a semnalelor (`SIGINT`, `SIGUSR1`).
+* În programul `city_manager`, la comanda `remove_district`, pentru crearea proceselor copil (`fork`) și apelarea sigură a comenzilor externe prin familia `exec*` (`execlp`).
+* În comunicarea între procese (IPC), utilizând `kill(pid, 0)` pentru verificarea existenței monitorului și `pipe` pentru transmiterea codurilor de eroare de la procesul fiu la procesul părinte.
+
+### 2. De ce am folosit AI 
+* Pentru a înlocui corect vechiul apel `signal()` cu funcția recomandată și robustă `sigaction()`, conform cerințelor stricte impuse pentru această fază.
+* Pentru a implementa un mecanism de siguranță la apelarea comenzii `rm -rf` dintr-un proces fiu, prevenind ștergerea accidentală a datelor utile de pe sistem (verificarea directoarelor `/` sau `.`).
+* Pentru a gestiona corect "race conditions" și a asigura scrierea "async-signal-safe" în handlerele de semnal (folosirea exclusivă a `write` la ieșirea standard, în detrimentul `printf`).
+
+### 3. Cum am folosit AI 
+* **Generare și adaptare:** Am solicitat structuri de bază pentru configurarea `sigaction` și izolarea proceselor, adaptându-le apoi la logica aplicației mele.
+* **Depanare avansată (Debugging logic):** AI-ul a identificat erori subtile de flux, cum ar fi necesitatea de a jurnaliza operațiunea de ștergere a districtului *înainte* ca fișierul de log să fie distrus fizic de comanda `rm` din copil.
+* **Scenarii de testare:** Am folosit AI-ul pentru a concepe pașii exacți de testare concurentă (dual-terminal), validând atât comunicarea cu succes, cât și robuștețea sistemului în cazul în care monitorul lipsește (fallback error handling).
