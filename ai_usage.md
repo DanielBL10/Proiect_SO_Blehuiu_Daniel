@@ -165,5 +165,8 @@ AI-ul a furnizat o implementare bazată pe `sscanf` cu limitatori de lățime (`
 
 ### 3. Cum am folosit AI
 * **Generare și adaptare:** Am solicitat structuri de bază pentru configurarea `sigaction` și izolarea proceselor, adaptându-le apoi la logica aplicației mele.
-* **Depanare avansată (Debugging logic):** AI-ul a identificat erori subtile de flux, cum ar fi necesitatea de a jurnaliza operațiunea de ștergere a districtului *înainte* ca fișierul de log să fie distrus fizic de comanda `rm` din copil.
+* **Depanare avansată (Debugging logic):** AI-ul a identificat erori subtile de flux, cum ar fi necesitatea de a jurnaliza operațiunea de ștergere a districtului *înainte* ca fișierul de log să fie distrus fizic de comanda `rm` din copil
 * **Scenarii de testare:** Am folosit AI-ul pentru a concepe pașii exacți de testare concurentă (dual-terminal), validând atât comunicarea cu succes, cât și robuștețea sistemului în cazul în care monitorul lipsește (fallback error handling).
+=======
+* **Scenarii de testare:** Am folosit AI-ul pentru a concepe pașii exacți de testare concurentă (dual-terminal), validând atât comunicarea cu succes, cât și robuștețea sistemului în cazul în care monitorul lipsește (fallback error handling).
+
