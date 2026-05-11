@@ -99,8 +99,7 @@ cat Sector1/logged_district
 
 ## Phase 2 : Processes and Signals
 
-
-# 2.1. Compilarea aplicațiilor
+#2.1. Compilarea aplicațiilor
 ```bash
 gcc -Wall monitor_reports.c -o monitor_reports
 gcc -Wall main.c reports.c -o city_manager
@@ -108,7 +107,6 @@ gcc -Wall main.c reports.c -o city_manager
 # 2.2. Demonstrare IPC (Semnale) și Jurnalizare
 
 Terminal 1 :
-```bash
 ./monitor_reports
 
 Terminal 2: Adăugarea unui raport de test (declanșează SIGUSR1)
