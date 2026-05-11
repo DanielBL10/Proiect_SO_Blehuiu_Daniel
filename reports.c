@@ -1,6 +1,8 @@
+#include <signal.h>
+#include <sys/wait.h>
+
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -31,6 +33,29 @@ int checkAccess(const char *path, const char *role, char access_type) {
     
     return 0;  
 }
+#include <signal.h>
+#include <sys/wait.h>
+
+int notifyMonitor() {
+    int fd = open(".monitor_pid", O_RDONLY);
+    if (fd < 0) return 0; 
+
+    char pid_str[32];
+    memset(pid_str, 0, sizeof(pid_str)); 
+    int bytes_read = read(fd, pid_str, sizeof(pid_str) - 1);
+    close(fd);
+
+    if (bytes_read <= 0) return 0;
+
+    pid_t monitor_pid = (pid_t)atoi(pid_str);
+    if (monitor_pid <= 0) return 0;
+
+    if (kill(monitor_pid, 0) == -1) {
+        return 0; 
+    }
+
+    return (kill(monitor_pid, SIGUSR1) == 0);
+}
 
 void logOperation(const char *district, const char *role, const char *user, const char *action) {
     char logPath[MAX_PATH];
@@ -38,18 +63,27 @@ void logOperation(const char *district, const char *role, const char *user, cons
 
     int fd = open(logPath, O_WRONLY | O_CREAT | O_APPEND, LOG_PERM);
     if (fd < 0) {
-        perror("Eroare la deschiderea jurnalului");
+        perror("Eroare deschidere jurnal");
         return;
     }
 
     time_t acum = time(NULL);
     char buffer[512];
+    
+    const char *monitor_status = "";
+    if (strcmp(action, "ADD_REPORT") == 0) {
+        if (notifyMonitor()) {
+            monitor_status = "\t[Monitor: NOTIFICAT]";
+        } else {
+            monitor_status = "\t[Monitor: ESUAT/LIPSA]";
+        }
+    }
 
-    int len = snprintf(buffer, sizeof(buffer), "%ld\t%s\t%s\t%s\n", 
-                       (long)acum, user, role, action);
-
+    int len = snprintf(buffer, sizeof(buffer), "%ld\t%s\t%s\t%s%s\n", 
+                       (long)acum, user, role, action, monitor_status);
+    
     if (write(fd, buffer, len) != len) {
-        perror("Eroare la scrierea in jurnal");
+        perror("Eroare scriere jurnal");
     }
 
     fchmod(fd, LOG_PERM); 
@@ -442,7 +476,6 @@ void handleFilter(const char *district, int conditionCount, char **conditions) {
         if (matchesAll) {
             foundAny = 1;
             
-           
             char timeBuf[32];
             strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&r.timestamp));
             
@@ -454,5 +487,65 @@ void handleFilter(const char *district, int conditionCount, char **conditions) {
 
     if (!foundAny) printf("Niciun raport nu indeplineste conditiile de filtrare.\n");
     close(fd);
+}
+
+void handleRemoveDistrict(const char *district, const char *role, const char *user) {
+    if (strcmp(role, "manager") != 0) {
+        const char *err = "Eroare: Doar managerul poate sterge districte!\n";
+        write(STDERR_FILENO, err, strlen(err));
+        return;
+    }
+
+    if (strlen(district) == 0 || strcmp(district, "/") == 0 || strcmp(district, ".") == 0) {
+        fprintf(stderr, "Eroare: Tentativa de stergere neautorizata a radacinii!\n");
+        return;
+    }
+
+    logOperation(district, role, user, "REMOVE_DISTRICT");
+
+    char symlinkPath[MAX_PATH];
+    snprintf(symlinkPath, MAX_PATH, "active_reports-%s", district);
+    unlink(symlinkPath);
+
+    int pfd[2];
+    if (pipe(pfd) == -1) {
+        perror("Eroare la pipe");
+        return;
+    }
+
+    pid_t pid = fork();
+    if (pid < 0) {
+        perror("Eroare fork");
+        return;
+    }
+
+    if (pid == 0) {
+        close(pfd[0]); 
+        fcntl(pfd[1], F_SETFD, FD_CLOEXEC);
+
+        execlp("rm", "rm", "-rf", district, NULL);
+        
+        int err_code = errno; 
+        write(pfd[1], &err_code, sizeof(err_code));
+        close(pfd[1]);
+        exit(EXIT_FAILURE);
+    } else {
+        close(pfd[1]); 
+        
+        int child_errno = 0;
+        if (read(pfd[0], &child_errno, sizeof(child_errno)) > 0) {
+            fprintf(stderr, "Eroare executie rm in fiu! Cod eroare: %d\n", child_errno);
+        }
+        close(pfd[0]);
+
+        int status;
+        waitpid(pid, &status, 0);
+        
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            printf("Districtul '%s' si symlink-ul au fost sterse complet.\n", district);
+        } else {
+            printf("Avertisment: Procesul de stergere a raportat probleme.\n");
+        }
+    }
 }
 

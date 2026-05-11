@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#define ACTION_REMOVE_DISTRICT 6
+
 #define MAX_PATH 256
 #define MAX_INSPECTOR_NAME 100
 #define MAX_CATEGORY_NAME 50
@@ -55,5 +57,8 @@ void handleFilter(const char *district, int conditionCount, char **conditions);
 
 void remove_district(const char *district, const char *role);
 void notify_monitor(const char *district, const char *role);
+
+void handleRemoveDistrict(const char *district, const char *role, const char *user);
+
 
 #endif

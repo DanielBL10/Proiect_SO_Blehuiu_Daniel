@@ -54,10 +54,14 @@ int main (int argc, char *argv[]) {
             conditionStartIndex = i + 1;  
             break; 
         }
+        else if (strcmp(argv[i], "--remove_district") == 0 && i + 1 < argc) {
+            command = "remove_district"; 
+            district = argv[++i];
+        }
     }
 
     if (!role || !district || !command) {
-        fprintf(stderr, "Lipsesc argumentele esentiale (role, district, comanda)!\n");
+        fprintf(stderr, "Utilizare: ./city_manager --role <manager/inspector> --user <nume> --<add/list/view/remove_report/filter/update_threshold/remove_district> <district>\n");
         exit(2);
     }
 
@@ -119,6 +123,10 @@ int main (int argc, char *argv[]) {
         int numConditions = argc - conditionStartIndex;
         handleFilter(district, numConditions, &argv[conditionStartIndex]);
     }
+    else if (strcmp(command, "remove_district") == 0) {
+        printf("Se initiaza procedura de stergere pentru districtul: %s\n", district);
+        handleRemoveDistrict(district, role, user);
+    }
 
     return 0;
-}
+}   
